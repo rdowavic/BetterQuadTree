@@ -13,20 +13,20 @@ int Node::maxUsage = 0;
 
 Node::Node() {}
 
-void* operator new(size_t size) _THROW_BAD_ALLOC {
+void* operator new(size_t size) noexcept {
     // the user made a new node so pls record it
     Node::currentUsage++;
     // do a max check
     if (Node::currentUsage > Node::maxUsage)
-	Node::maxUsage = Node::currentUsage;
+	  Node::maxUsage = Node::currentUsage;
     
-    void* p = new Node();
+    void* p = std::malloc(size);
     return p;
 }
 
 void operator delete(void* p) noexcept {
     Node::currentUsage--;
-    free(p);
+    std::free(p);
 }
 
 bool Node::at(size_t i, size_t j, size_t distanceFromLeaf) {

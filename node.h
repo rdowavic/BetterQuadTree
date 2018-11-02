@@ -50,14 +50,14 @@ typedef union Link {
 class Node {
 public:
     Node();
-    void* operator new(size_t size) _THROW_BAD_ALLOC {
+    void* operator new(size_t size) noexcept {
     // the user made a new node so pls record it
     Node::currentUsage++;
     // do a max check
     if (Node::currentUsage > Node::maxUsage)
 	Node::maxUsage = Node::currentUsage;
     
-    void* p = new Node();
+    void* p = std::malloc(size);
     return p;
 }
     bool at(size_t i, size_t j, size_t distanceFromLeaf);
@@ -70,7 +70,7 @@ public:
     static std::unique_ptr<Node> Product(Node* const A, Node* const B, size_t distanceFromLeaf);
     void operator delete(void* p) noexcept {
     Node::currentUsage--;
-    free(p);
+    std::free(p);
 }
 
 //members
